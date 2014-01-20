@@ -108,8 +108,11 @@ class Updater
     @initial_revision = read_current_revision
 
     # ensure we don't munge line endings on checkout
-    safe_system "git config core.autocrlf false"
-
+    begin safe_system "git config core.autocrlf false"
+    rescue Exception
+      return @initial_revision
+    end
+    
     args = ["pull"]
     args << "--rebase" if ARGV.include? "--rebase"
     args << "-q" unless ARGV.verbose?
